@@ -4,31 +4,43 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         ArrayList<PortalCrane> portalCranes = new ArrayList<>();
         ArrayList<Facility> facilities = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\Oleks\\Desktop\\data.txt"));
+        ArrayList<String> classes = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader("data.txt"));
         while (reader.ready()) {
-            String[] s = reader.readLine().trim().replaceAll("\\s+", " ").split(" ");
-            if (s.length == 4) {
-                //System.out.println(Arrays.toString(s));
+            String line = reader.readLine();
+            if (line.equals("")) continue;
+            String[] s = line.trim().replaceAll("\\s+", " ").split(" ");
+            Class clazz;
+            try {
+                clazz = Class.forName(s[0].substring(0, s[0].length() - 1));
+                classes.add(clazz.getName());
+            } catch (ClassNotFoundException e) {
                 double[] d = convertStringArrayToDoubleArray(s);
-                portalCranes.add(new PortalCrane(new Point(d[0], d[1]), new Point(d[2], d[3])));
-            } else if (s.length == 8) {
-                //System.out.println(Arrays.toString(s));
-                double[] d = convertStringArrayToDoubleArray(s);
-                facilities.add(new ShipCrane
-                        (new Point(d[0], d[1]), new Point(d[2], d[3]),
-                                new Point(d[4], d[5]), new Point(d[6], d[7])));
+                if (s.length == 4) {
+                    portalCranes.add(new PortalCrane(new Point(d[0], d[1]), new Point(d[2], d[3])));
+                } else if (s.length == 8) {
+                    Point[] points = new  Point[]{new Point(d[0], d[1]), new Point(d[2], d[3]),
+                                                  new Point(d[4], d[5]), new Point(d[6], d[7])};
+                    if (classes.get(classes.size()-1).equals("ShipCrane"))
+                        facilities.add(new ShipCrane(points));
+                    if (classes.get(classes.size()-1).equals("Storage"))
+                        facilities.add(new Storage(points));
+                }
             }
         }
         reader.close();
 
-        FileWriter writer = new FileWriter("C:\\Users\\Oleks\\Desktop\\result.txt");
+        //FileWriter writer = new FileWriter("C:\\Users\\Oleks\\Desktop\\result.txt");
+        FileWriter writer = new FileWriter("result.txt");
         for (PortalCrane portalCrane : portalCranes) {
             //System.out.println(portalCrane);
             writer.write(portalCrane + System.lineSeparator() + System.lineSeparator());

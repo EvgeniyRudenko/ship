@@ -32,7 +32,8 @@ public class PortalCrane extends Facility {
                     value = points.get(i).crash(facility.getPoint(j), facility.getPoint(j + 1));
                 else
                     value = points.get(i).crash(facility.getPoint(j), facility.getPoint(1));
-                output += String.format("%d %d %d %d %3.2f", count, i, facility.getCount(), j, value)+System.lineSeparator();
+                output += String.format("%d %d %d %d%d %3.2f", count, i, facility.getCount(),
+                        j, j != facility.points.size() - 1 ? j+1 : 1, value)+System.lineSeparator();
             }
             output+=System.lineSeparator();
         }
