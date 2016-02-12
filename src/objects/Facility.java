@@ -1,3 +1,5 @@
+package objects;
+
 import geometry.Point;
 
 import java.util.ArrayList;

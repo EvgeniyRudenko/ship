@@ -1,6 +1,9 @@
-import geometry.Point;
+package objects;
 
-public class ShipCrane extends Facility{
+import geometry.Point;
+import objects.Facility;
+
+public class Storage extends Facility {
 
     private int count;
     private static int totalnumber = 0;
@@ -10,7 +13,7 @@ public class ShipCrane extends Facility{
         return count;
     }
 
-    public ShipCrane(Point... points) {
+    public Storage(Point... points) {
         super(points);
         totalnumber++;
         count=totalnumber;

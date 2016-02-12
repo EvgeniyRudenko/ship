@@ -1,4 +1,7 @@
+package objects;
+
 import geometry.Point;
+import objects.Facility;
 
 import java.util.Collections;
 
@@ -23,7 +26,7 @@ public class PortalCrane extends Facility {
     }
 
     public String crash(Facility facility) {
-        //int isPortalCrane = (facility instanceof PortalCrane) ? 1 : 0;
+        //int isPortalCrane = (facility instanceof objects.PortalCrane) ? 1 : 0;
         String output = "";
         double value;
         for (int i = 1; i < points.size(); i++) {
