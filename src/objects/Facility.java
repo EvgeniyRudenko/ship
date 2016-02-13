@@ -11,6 +11,10 @@ public class Facility {
     private int count;
     private static int totalnumber = 0;
 
+    public int getStartPoint(){
+        return 0;
+    }
+
     public int getCount() {
         return count;
     }
@@ -22,10 +26,26 @@ public class Facility {
     }
 
     public Point getPoint(int n) {
-        n--;
         if (n < 0 || n > points.size()-1)
-            throw new IllegalArgumentException("Неверная точка: " + (n+1));
+            throw new IllegalArgumentException("Неверная точка: " + n);
         return points.get(n);
+    }
+
+    public String crash(Facility facility) {
+        String output = "";
+        double value;
+        for (int i = getStartPoint(); i < points.size(); i++) {
+            for (int j = facility.getStartPoint(); j < facility.points.size(); j++) {
+                if (j != facility.points.size() - 1)
+                    value = points.get(i).crash(facility.getPoint(j), facility.getPoint(j + 1));
+                else
+                    value = points.get(i).crash(facility.getPoint(j), facility.getPoint(facility.getStartPoint()));
+                output += String.format("%d %d %d %d%d %7.2f", getCount(), i, facility.getCount(),
+                        j, j != facility.points.size() - 1 ? j + 1 : facility.getStartPoint(), value) + System.lineSeparator();
+            }
+            output += System.lineSeparator();
+        }
+        return output;
     }
 
     @Override

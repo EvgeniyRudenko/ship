@@ -19,7 +19,7 @@ public class Main {
         ArrayList<String> classes = new ArrayList<>();
 //        BufferedReader reader = new BufferedReader(new FileReader(("data.txt")));
         BufferedReader reader = new BufferedReader(new InputStreamReader
-                (Main.class.getClassLoader().getResourceAsStream("data.txt")));
+                (new FileInputStream("./data.txt")));
         while (reader.ready()) {
             String line = reader.readLine();
             if (line.equals("")) continue;
@@ -45,6 +45,7 @@ public class Main {
         reader.close();
 
         FileWriter writer = new FileWriter("result.txt");
+
         for (PortalCrane portalCrane : portalCranes) {
             writer.write(portalCrane + System.lineSeparator() + System.lineSeparator());
         }
@@ -53,14 +54,28 @@ public class Main {
             writer.write(facility + System.lineSeparator() + System.lineSeparator());
         }
 
-
         for (int i = 0; i < portalCranes.size() - 1; i++) {
             writer.write(portalCranes.get(i).crash(portalCranes.get(i + 1)) +
                     System.lineSeparator() + System.lineSeparator());
         }
+
         for (int i = portalCranes.size() - 1; i > 0; i--) {
             writer.write(portalCranes.get(i).crash(portalCranes.get(i - 1)) +
                     System.lineSeparator() + System.lineSeparator());
+        }
+
+//        for (int i = 0; i < portalCranes.size(); i++) {
+//            for (int j = 0; j < facilities.size(); j++) {
+//                writer.write(portalCranes.get(i).crash(facilities.get(j))+
+//                        System.lineSeparator()+System.lineSeparator());
+//            }
+//        }
+
+        for (int i = 0; i < facilities.size(); i++) {
+            for (int j = 0; j < portalCranes.size(); j++) {
+                writer.write(facilities.get(i).crash(portalCranes.get(j))+
+                        System.lineSeparator()+System.lineSeparator());
+            }
         }
 
         writer.close();

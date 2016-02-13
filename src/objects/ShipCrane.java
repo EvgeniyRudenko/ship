@@ -10,7 +10,8 @@ public class ShipCrane extends Facility {
 
     @Override
     public int getCount() {
-        return count;
+        //return count;
+        return super.getCount();
     }
 
     public ShipCrane(Point... points) {

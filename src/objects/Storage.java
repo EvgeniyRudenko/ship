@@ -10,7 +10,8 @@ public class Storage extends Facility {
 
     @Override
     public int getCount() {
-        return count;
+        //return count;
+        return super.getCount();
     }
 
     public Storage(Point... points) {
