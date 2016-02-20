@@ -44,7 +44,9 @@ public class Point {
     public boolean belongsToLine(Point point1, Point point2){
         double minX = min(point1.getX(), point2.getX());
         double maxX = max(point1.getX(), point2.getX());
-        return x>=minX && x<=maxX;
+        double minY = min(point1.getY(), point2.getY());
+        double maxY = max(point1.getY(), point2.getY());
+        return x>=minX && x<=maxX && y>=minY && y<=maxY  ;
     }
 
     public double crash(Point point1, Point point2){

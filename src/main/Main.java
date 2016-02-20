@@ -64,12 +64,12 @@ public class Main {
                     System.lineSeparator() + System.lineSeparator());
         }
 
-//        for (int i = 0; i < portalCranes.size(); i++) {
-//            for (int j = 0; j < facilities.size(); j++) {
-//                writer.write(portalCranes.get(i).crash(facilities.get(j))+
-//                        System.lineSeparator()+System.lineSeparator());
-//            }
-//        }
+        for (int i = 0; i < portalCranes.size(); i++) {
+            for (int j = 0; j < facilities.size(); j++) {
+                writer.write(portalCranes.get(i).crash(facilities.get(j))+
+                        System.lineSeparator()+System.lineSeparator());
+            }
+        }
 
         for (int i = 0; i < facilities.size(); i++) {
             for (int j = 0; j < portalCranes.size(); j++) {
@@ -77,6 +77,9 @@ public class Main {
                         System.lineSeparator()+System.lineSeparator());
             }
         }
+
+
+        System.out.println((portalCranes.get(3).crash(facilities.get(5))));
 
         writer.close();
     }
