@@ -28,31 +28,31 @@ public class Point {
         this.y = y;
     }
 
-    public double getDistanceTo(Point point){
-        return sqrt(pow(x - point.x, 2) - pow(y - point.y, 2));
+    public double getDistanceTo(Point point) {
+        return sqrt(pow(x - point.x, 2) + pow(y - point.y, 2));
     }
 
-    public double getDistanceTo(Line line){
-        return Math.abs(line.getA()*x+line.getB()*y+line.getC())/sqrt(pow(line.getA(),2)+pow(line.getB(),2));
+    public double getDistanceTo(Line line) {
+        return Math.abs(line.getA() * x + line.getB() * y + line.getC()) / sqrt(pow(line.getA(), 2) + pow(line.getB(), 2));
     }
 
-    public Point getPerpendicularBasePoint(Point point1, Point point2){
+    public Point getPerpendicularBasePoint(Point point1, Point point2) {
         Line line = new Line(point1, point2);
         return line.getPerpendicularLine(this).getIntersectionPoint(line);
     }
 
-    public boolean belongsToLine(Point point1, Point point2){
+    public boolean belongsToLine(Point point1, Point point2) {
         double minX = min(point1.getX(), point2.getX());
         double maxX = max(point1.getX(), point2.getX());
         double minY = min(point1.getY(), point2.getY());
         double maxY = max(point1.getY(), point2.getY());
-        return x>=minX && x<=maxX && y>=minY && y<=maxY  ;
+        return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
 
-    public double crash(Point point1, Point point2){
+    public double crash(Point point1, Point point2) {
         Line line = new Line(point1, point2);
-        Point point = getPerpendicularBasePoint(point1,point2);
-        if (point.belongsToLine(point1,point2))
+        Point point = getPerpendicularBasePoint(point1, point2);
+        if (point.belongsToLine(point1, point2))
             return getDistanceTo(line);
         return 100;
     }

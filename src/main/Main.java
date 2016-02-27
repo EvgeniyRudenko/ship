@@ -1,19 +1,28 @@
 package main;
 
 import geometry.Point;
+import gui.MyPanel;
 import objects.Facility;
 import objects.PortalCrane;
 import objects.ShipCrane;
 import objects.Storage;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static java.lang.Thread.sleep;
 
 public class Main {
-    public static void main(String[] args) throws
-            IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException {
+
+        public static void main(String[] args) throws
+                IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
+                InvocationTargetException, InstantiationException, InterruptedException {
         ArrayList<PortalCrane> portalCranes = new ArrayList<>();
         ArrayList<Facility> facilities = new ArrayList<>();
         ArrayList<String> classes = new ArrayList<>();
@@ -78,10 +87,33 @@ public class Main {
             }
         }
 
-
-        System.out.println((portalCranes.get(3).crash(facilities.get(5))));
-
         writer.close();
+
+            System.out.println(Arrays.toString(portalCranes.get(0).getFullListOfDistances(facilities.get(1)).toArray()));
+            final JFrame frame = new JFrame("CraneSafety 1.0");
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            final MyPanel myPanel = new MyPanel(portalCranes, facilities);
+            SpinnerModel sm = new SpinnerNumberModel(1, 1, 10, 1);//default value,lower bound,upper bound,increment by
+            final JSpinner spinner = new JSpinner(sm);
+            ChangeListener changeListener = new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    myPanel.setScale((int)spinner.getValue());
+                    frame.repaint(10);
+                }
+            };
+            spinner.addChangeListener(changeListener);
+            myPanel.setLayout(new BorderLayout());
+            myPanel.add(spinner, BorderLayout.NORTH);
+            frame.add(myPanel);
+            frame.setVisible(true);
+            for (int i = 0; i < 200; i++) {
+                sleep(50);
+                portalCranes.get(0).move(0.5);
+                portalCranes.get(1).rotate(2);
+                frame.repaint(10);
+            }
     }
 
     public static double[] convertStringArrayToDoubleArray(String[] s) {
@@ -91,6 +123,7 @@ public class Main {
         }
         return d;
     }
+
 }
 
 

@@ -25,6 +25,10 @@ public class Facility {
         count=totalnumber;
     }
 
+    public int getNumberOfPoints(){
+        return points.size();
+    }
+
     public Point getPoint(int n) {
         if (n < 0 || n > points.size()-1)
             throw new IllegalArgumentException("Неверная точка: " + n);
@@ -46,6 +50,28 @@ public class Facility {
             output += System.lineSeparator();
         }
         return output;
+    }
+
+    public ArrayList<Double> getFullListOfDistances(Facility facility){
+        ArrayList<Double> list = new ArrayList<>();
+        list.addAll(getDistancesTo(facility));
+        list.addAll(facility.getDistancesTo(this));
+        return list;
+    }
+
+    private ArrayList<Double> getDistancesTo(Facility facility){
+        ArrayList<Double> list = new ArrayList<>();
+        double value;
+        for (int i = getStartPoint(); i < points.size(); i++) {
+            for (int j = facility.getStartPoint(); j < facility.points.size(); j++) {
+                if (j != facility.points.size() - 1)
+                    value = points.get(i).crash(facility.getPoint(j), facility.getPoint(j + 1));
+                else
+                    value = points.get(i).crash(facility.getPoint(j), facility.getPoint(facility.getStartPoint()));
+                list.add(value);
+            }
+        }
+        return list;
     }
 
     @Override

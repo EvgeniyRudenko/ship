@@ -6,7 +6,7 @@ import java.util.Collections;
 
 import static java.lang.Math.*;
 
-public class PortalCrane extends Facility {
+public class PortalCrane extends Facility implements Cloneable{
 
     double width = 6;
     double height = 6;
@@ -30,10 +30,40 @@ public class PortalCrane extends Facility {
         count = totalnumber;
     }
 
+    public void rotate(double angle) {
+        Point center = new Point(
+                (getPoint(2).getX() + getPoint(4).getX()) / 2,
+                (getPoint(2).getY() + getPoint(4).getY()) / 2
+        );
+        for (int i = 0; i < points.size(); i++) {
+            double x = getPoint(i).getX()-center.getX();
+            double y = getPoint(i).getY()-center.getY();
+            double newPointX = center.getX() + x * cos(angle * Math.PI / 180) + y * sin(angle * Math.PI / 180);
+            double newPointY = center.getY() + -x * sin(angle * Math.PI / 180) + y * cos(angle * Math.PI / 180);
+            getPoint(i).setX(newPointX);
+            getPoint(i).setY(newPointY);
+        }
+    }
+
+    public void move(double distance){
+        for (Point point : points) {
+            point.setX(point.getX() + distance);
+        }
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 
     private Point[] getPoints2To5() {
-        double angle01y = atan((getPoint(1).getX() - getPoint(0).getX()) /
-                (getPoint(1).getY() - getPoint(0).getY()));
+        double angle01y;
+        if (abs(getPoint(0).getY()-getPoint(1).getY())<0.001){
+            angle01y = Math.PI/2;
+        } else {
+            angle01y = atan((getPoint(1).getX() - getPoint(0).getX()) /
+                    (getPoint(1).getY() - getPoint(0).getY()));
+        }
         if (getPoint(1).getY() < 0) angle01y += Math.PI;
         Point[] points2To5 = new Point[4];
         for (int i = 0; i < 4; i++) {
