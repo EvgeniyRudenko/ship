@@ -14,16 +14,13 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import static java.lang.Thread.sleep;
 
 public class Main {
 
         public static void main(String[] args) throws
                 IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
                 InvocationTargetException, InstantiationException, InterruptedException {
-        ArrayList<PortalCrane> portalCranes = new ArrayList<>();
+        final ArrayList<PortalCrane> portalCranes = new ArrayList<>();
         ArrayList<Facility> facilities = new ArrayList<>();
         ArrayList<String> classes = new ArrayList<>();
 //        BufferedReader reader = new BufferedReader(new FileReader(("data.txt")));
@@ -89,7 +86,6 @@ public class Main {
 
         writer.close();
 
-            System.out.println(Arrays.toString(portalCranes.get(0).getFullListOfDistances(facilities.get(1)).toArray()));
             final JFrame frame = new JFrame("CraneSafety 1.0");
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -108,12 +104,14 @@ public class Main {
             myPanel.add(spinner, BorderLayout.NORTH);
             frame.add(myPanel);
             frame.setVisible(true);
-            for (int i = 0; i < 200; i++) {
-                sleep(50);
-                portalCranes.get(0).move(0.5);
-                portalCranes.get(1).rotate(2);
-                frame.repaint(10);
-            }
+            ArrayList<Facility> allObjects = new ArrayList<>();
+            allObjects.addAll(portalCranes);
+            allObjects.addAll(facilities);
+            Thread[] threads = new Thread[5];
+                for (int i = 0; i < portalCranes.size(); i++) {
+                    threads[i] = new Thread(new MyRunnable(portalCranes.get(i), allObjects, frame));
+                    threads[i].start();
+                }
     }
 
     public static double[] convertStringArrayToDoubleArray(String[] s) {

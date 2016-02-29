@@ -82,5 +82,24 @@ public class Facility {
         }
         return output;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Facility facility = (Facility) o;
+
+        if (count != facility.count) return false;
+        return !(points != null ? !points.equals(facility.points) : facility.points != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = points != null ? points.hashCode() : 0;
+        result = 31 * result + count;
+        return result;
+    }
 }
 

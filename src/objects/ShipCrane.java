@@ -20,4 +20,22 @@ public class ShipCrane extends Facility {
         count=totalnumber;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        ShipCrane shipCrane = (ShipCrane) o;
+
+        return count == shipCrane.count;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + count;
+        return result;
+    }
 }
