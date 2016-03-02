@@ -10,10 +10,10 @@ import java.util.Random;
 import static java.lang.Math.*;
 import static java.lang.Thread.sleep;
 
-public class PortalCrane extends Facility implements Cloneable{
+public class PortalCrane extends Facility implements Cloneable {
 
-    double width = 6;
-    double height = 6;
+    private double width = 6;
+    private double height = 6;
     private int count;
     private static int totalnumber = 0;
     private boolean isStopped = false;
@@ -35,73 +35,89 @@ public class PortalCrane extends Facility implements Cloneable{
         count = totalnumber;
     }
 
-    public void rotate(double angle, ArrayList<Facility> facilities, JFrame jFrame){
-        double step = 0.5*Math.signum(angle);
-        int numberOfSteps = (int) (abs(angle/step));
+    public void rotate(double angle, ArrayList<Facility> facilities, JFrame jFrame) {
+        double step = 0.5 * Math.signum(angle);
+        int numberOfSteps = (int) (abs(angle / step));
         for (int i = 0; i < numberOfSteps; i++) {
-            if (!rotate1Step(step, facilities, jFrame)){
-                isStopped=true;
-                return;
+            rotate1Step(step, facilities, jFrame);
+            try {
+                sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            if (isStopped)
+                return;
         }
     }
 
-    private boolean rotate1Step(double angle, ArrayList<Facility> facilities, JFrame jFrame) {
-        if (!canMove(angle, facilities, 2)) return false;
+    private void rotate1Step(double angle, ArrayList<Facility> facilities, JFrame jFrame) {
+        if (!canMove(angle, facilities, 2)) {
+            isStopped = true;
+            return;
+        }
+        isStopped = false;
         recalculatePointsForRotation(angle);
         jFrame.repaint();
-        try {
-            sleep(50);
-        } catch (InterruptedException e) {
-        }
-        return true;
     }
 
-    public void move(double distance, ArrayList<Facility> facilities, JFrame jFrame){
-        double step = 0.5*Math.signum(distance);
-        int numberOfSteps = (int) (abs(distance/step));
+    public void move(double distance, ArrayList<Facility> facilities, JFrame jFrame) {
+        double step = 0.5 * Math.signum(distance);
+        int numberOfSteps = (int) (abs(distance / step));
         for (int i = 0; i < numberOfSteps; i++) {
-            if (!move1Step(step, facilities, jFrame)){
-                isStopped=true;
-                return;
+            move1Step(step, facilities, jFrame);
+            try {
+                sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            if (isStopped)
+                return;
         }
     }
 
-    public void doRandomMove(ArrayList<Facility> facilities, JFrame jFrame){
+    public void doRandomMove(ArrayList<Facility> facilities, JFrame jFrame) {
         int sign = new Random().nextInt(10) % 2 == 0 ? 1 : -1;
-        if (new Random().nextInt(10) % 2 == 0)
-            rotate(new Random().nextInt(180) * sign, facilities, jFrame);
-        else
-            move(new Random().nextInt(10) * sign, facilities, jFrame);
+        switch (new Random().nextInt() % 3) {
+            case 0:
+                rotate(new Random().nextInt(180) * sign, facilities, jFrame);
+                break;
+            case 1:
+                move(new Random().nextInt(10) * sign, facilities, jFrame);
+                break;
+            case 2:
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                }
+                break;
+        }
     }
 
-    private boolean move1Step(double step, ArrayList<Facility> facilities, JFrame jFrame){
-        if (!canMove(step, facilities, 1)) return false;
+    private void move1Step(double step, ArrayList<Facility> facilities, JFrame jFrame) {
+        if (!canMove(step, facilities, 1)) {
+            isStopped = true;
+            return;
+        }
+        isStopped = false;
         recalculatePointsForMoving(step);
         jFrame.repaint();
-        try {
-            sleep(50);
-        } catch (InterruptedException e) {
-        }
-        return true;
     }
 
-    private void recalculatePointsForMoving(double distance){
+    private void recalculatePointsForMoving(double distance) {
         for (Point point : points) {
             point.setX(point.getX() + distance);
         }
     }
 
-    private void recalculatePointsForRotation(double angle){
+    private void recalculatePointsForRotation(double angle) {
         Point center = new Point(
                 (getPoint(2).getX() + getPoint(4).getX()) / 2,
                 (getPoint(2).getY() + getPoint(4).getY()) / 2
         );
         //Point center = new Point(getPoint(0).getX(), getPoint(0).getY()); // вращение вокруг точки 0
         for (int i = 0; i < points.size(); i++) {
-            double x = getPoint(i).getX()-center.getX();
-            double y = getPoint(i).getY()-center.getY();
+            double x = getPoint(i).getX() - center.getX();
+            double y = getPoint(i).getY() - center.getY();
             double newPointX = center.getX() + x * cos(angle * Math.PI / 180) + y * sin(angle * Math.PI / 180);
             double newPointY = center.getY() + -x * sin(angle * Math.PI / 180) + y * cos(angle * Math.PI / 180);
             getPoint(i).setX(newPointX);
@@ -109,42 +125,40 @@ public class PortalCrane extends Facility implements Cloneable{
         }
     }
 
-    private boolean canMove(double step, ArrayList<Facility> facilities, int n){
+    private boolean canMove(double step, ArrayList<Facility> facilities, int n) {
+
+        double min = getMinDistance(facilities, this, this);
+        if (!isStopped)
+            return min > 1.5;
+
+        PortalCrane crane = new PortalCrane(new Point(getPoint(0).getX(), getPoint(0).getY()),
+                new Point(getPoint(1).getX(), getPoint(1).getY()));
+        if (n == 1)
+            crane.recalculatePointsForMoving(step);
+        else
+            crane.recalculatePointsForRotation(step);
+
+        double min2 = crane.getMinDistance(facilities, this, crane);
+        return  min2 > 1.5 || min2 > min;
+
+    }
+
+    private double getMinDistance(ArrayList<Facility> facilities, Facility facility1, Facility facility2) {
+        double result = 100;
         for (int i = 0; i < facilities.size(); i++) {
-            if (this.equals(facilities.get(i))) continue;
+            Facility current = facilities.get(i);
+            if (this.equals(current) || facility1.equals(current) ||  facility2.equals(current)) continue;
             ArrayList<Double> list = getFullListOfDistances(facilities.get(i));
             Collections.sort(list);
-            double min = list.get(0);
-            for (int j = 0; j < list.size(); j++) {
-                if (list.get(j) < 1){
-                    if (n==1)
-                        recalculatePointsForMoving(step);
-                    else
-                        recalculatePointsForRotation(step);
-                    ArrayList<Double> list2 = getFullListOfDistances(facilities.get(i));
-                    Collections.sort(list2);
-                    double min2 = list2.get(0);
-                    if (n==1)
-                        recalculatePointsForMoving(-step);
-                    else
-                        recalculatePointsForRotation(-step);
-                    if (min2>min) {
-                        isStopped = true;
-                    }
-                    else {
-                        isStopped = false;
-                        return false;
-                    }
-                }
-            }
+            result = min(result, list.get(0));
         }
-        return true;
+        return result;
     }
 
     private Point[] getPoints2To5() {
         double angle01y;
-        if (abs(getPoint(0).getY()-getPoint(1).getY())<0.001){
-            angle01y = Math.PI/2;
+        if (abs(getPoint(0).getY() - getPoint(1).getY()) < 0.001) {
+            angle01y = Math.PI / 2;
         } else {
             angle01y = atan((getPoint(1).getX() - getPoint(0).getX()) /
                     (getPoint(1).getY() - getPoint(0).getY()));
@@ -209,7 +223,8 @@ public class PortalCrane extends Facility implements Cloneable{
 
         if (Double.compare(crane.width, width) != 0) return false;
         if (Double.compare(crane.height, height) != 0) return false;
-        return count == crane.count;
+        return true;
+        //return count == crane.count;
 
     }
 

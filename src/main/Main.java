@@ -15,7 +15,11 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
+
 public class Main {
+
+    static boolean multiThread = true;
 
         public static void main(String[] args) throws
                 IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
@@ -90,7 +94,7 @@ public class Main {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             final MyPanel myPanel = new MyPanel(portalCranes, facilities);
-            SpinnerModel sm = new SpinnerNumberModel(1, 1, 10, 1);//default value,lower bound,upper bound,increment by
+            SpinnerModel sm = new SpinnerNumberModel(10, 1, 10, 1);//default value,lower bound,upper bound,increment by
             final JSpinner spinner = new JSpinner(sm);
             ChangeListener changeListener = new ChangeListener() {
                 @Override
@@ -104,14 +108,28 @@ public class Main {
             myPanel.add(spinner, BorderLayout.NORTH);
             frame.add(myPanel);
             frame.setVisible(true);
+            sleep(3000);
             ArrayList<Facility> allObjects = new ArrayList<>();
             allObjects.addAll(portalCranes);
             allObjects.addAll(facilities);
-            Thread[] threads = new Thread[5];
+
+            if (multiThread)
+            {
+                Thread[] threads = new Thread[portalCranes.size()];
                 for (int i = 0; i < portalCranes.size(); i++) {
                     threads[i] = new Thread(new MyRunnable(portalCranes.get(i), allObjects, frame));
                     threads[i].start();
                 }
+            }
+            else
+            {
+                while (true) {
+                    for (int i = 0; i < portalCranes.size(); i++) {
+                        portalCranes.get(i).doRandomMove(allObjects, frame);
+                    }
+                }
+            }
+
     }
 
     public static double[] convertStringArrayToDoubleArray(String[] s) {

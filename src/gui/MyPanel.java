@@ -10,13 +10,17 @@ import java.util.ArrayList;
 
 public class MyPanel extends JPanel {
 
-    private int scale = 10;
+    private static int scale = 10;
 
     public void setScale(int scale) {
-        this.scale = scale;
+        MyPanel.scale = scale;
     }
 
-    private static Point x0y = new Point(200, 500);
+    private static Point x0y;
+    static {
+        x0y = new Point(20*scale, 50*scale);
+    }
+
     private ArrayList<PortalCrane> portalCranes;
     private ArrayList<Facility> facilities;
 
@@ -71,8 +75,8 @@ public class MyPanel extends JPanel {
     }
 
     private void drawAxis(Graphics g) {
-        g.drawLine((int) (x0y.getX()), (int) x0y.getY(), (int) (x0y.getX() + 1700), (int) x0y.getY());
-        g.drawLine((int) (x0y.getX()), (int) x0y.getY() - 450, (int) (x0y.getX()), (int) x0y.getY() + 450);
+        g.drawLine((int) (x0y.getX()), (int) x0y.getY(), (int) (x0y.getX() + 170*scale), (int) x0y.getY());
+        g.drawLine((int) (x0y.getX()), (int) x0y.getY() - 45*scale, (int) (x0y.getX()), (int) x0y.getY() + 45*scale);
     }
 
     private void drawCranes(Graphics g) {

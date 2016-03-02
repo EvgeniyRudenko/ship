@@ -59,7 +59,7 @@ public class Facility {
         return list;
     }
 
-    private ArrayList<Double> getDistancesTo(Facility facility){
+    private synchronized ArrayList<Double> getDistancesTo(Facility facility){
         ArrayList<Double> list = new ArrayList<>();
         double value;
         for (int i = getStartPoint(); i < points.size(); i++) {
@@ -90,7 +90,7 @@ public class Facility {
 
         Facility facility = (Facility) o;
 
-        if (count != facility.count) return false;
+        //if (count != facility.count) return false;
         return !(points != null ? !points.equals(facility.points) : facility.points != null);
 
     }
